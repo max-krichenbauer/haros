@@ -225,6 +225,9 @@ class PluginInterface(LoggingObject):
 # HAROS Query Engine
 ###############################################################################
 
+def cmp(a, b):
+    return (a > b) - (a < b)
+
 class QueryEngine(LoggingObject):
     query_data = {
         "files": [],
@@ -242,7 +245,7 @@ class QueryEngine(LoggingObject):
         "int": int,
         "isinstance": isinstance,
         "len": len,
-        "long": long,
+        "long": int,
         "max": max,
         "min": min,
         "pow": pow,

@@ -28,7 +28,9 @@ from operator import attrgetter
 import os
 import re
 import subprocess
-from urllib2 import urlopen, URLError
+# from urllib2 import urlopen, URLError
+from urllib.request import urlopen
+from urllib.error import URLError
 import xml.etree.ElementTree as ET
 import yaml
 
@@ -122,7 +124,7 @@ class ProjectExtractor(LoggingObject):
     def _load_user_repositories(self):
         self.log.info("Looking up user provided repositories.")
         extractor = RepositoryExtractor()
-        for name, data in self.repositories.iteritems():
+        for name, data in self.repositories.items():
             repo = self.repo_cache.get(name)
             if repo:
                 self.project.repositories.append(repo)
@@ -235,7 +237,7 @@ class ProjectExtractor(LoggingObject):
 
     def _update_node_cache(self):
         self.log.debug("Importing cached Nodes.")
-        data = [datum for datum in self.node_cache.itervalues()]
+        data = [datum for datum in self.node_cache.values()]
         self.node_cache = {}
         for datum in data:
             try:
@@ -410,7 +412,7 @@ class RepositoryExtractor(LoggingObject):
         if not pkgs:
             return True
         remaining = set(pkgs)
-        for name, info in data.iteritems():
+        for name, info in data.items():
             if not "release" in info:
                 continue
             for pkg in info["release"].get("packages", [name]):
@@ -575,7 +577,7 @@ class PackageExtractor(LoggingObject):
                 self.log.debug("Found file %s at %s", filename, path)
                 source = SourceFile(filename, path, pkg)
                 ignore = source.set_file_stats()
-                if any(v for v in ignore.itervalues()):
+                if any(v for v in ignore.values()):
                     analysis_ignore[source.id] = ignore
                 if source.language == "launch":
                     self.log.info("Parsing launch file: " + source.path)
@@ -732,7 +734,7 @@ class NodeExtractor(LoggingObject):
 
     def _update_nodelets(self, libraries):
         lib_files = {}
-        for target in libraries.itervalues():
+        for target in libraries.values():
             files = []
             for path in target.files:
                 sf = self._get_file(path)
@@ -751,7 +753,7 @@ class NodeExtractor(LoggingObject):
                 nodelet.source_files = lib_files[nodelet.name]
 
     def _register_nodes(self, executables):
-        for target in executables.itervalues():
+        for target in executables.values():
             node = Node(target.output_name, self.package)
             for path in target.files:
                 sf = self._get_file(path)
@@ -766,7 +768,7 @@ class NodeExtractor(LoggingObject):
             self.package.nodes.append(node)
 
     def _extract_primitives(self):
-        for i in xrange(len(self.package.nodes)):
+        for i in range(len(self.package.nodes)):
             node = self.package.nodes[i]
             self.log.debug("Extracting primitives for node %s", node.id)
             if not node.source_tree is None:
@@ -903,7 +905,7 @@ class NodeExtractor(LoggingObject):
                         and call.reference.startswith(ros_prefix))):
                 if len(call.arguments) > 2:
                     ns = resolve_expression(call.arguments[0])
-                    if not isinstance(ns, basestring):
+                    if not isinstance(ns, str):
                         ns = "?"
                 else:
                     ns = "~"
@@ -1028,7 +1030,7 @@ class NodeExtractor(LoggingObject):
                 if value.name == "NodeHandle":
                     if len(value.arguments) == 2:
                         value = value.arguments[0]
-                        if isinstance(value, basestring):
+                        if isinstance(value, str):
                             ns = value
                         elif isinstance(value, CppDefaultArgument):
                             ns = ""
@@ -1056,7 +1058,7 @@ class NodeExtractor(LoggingObject):
 
     def _extract_topic(self, call, topic_pos = 0):
         name = resolve_expression(call.arguments[topic_pos])
-        if not isinstance(name, basestring):
+        if not isinstance(name, str):
             name = "?"
         return name or "?"
 
@@ -1103,6 +1105,6 @@ class NodeExtractor(LoggingObject):
 
     def _extract_queue_size(self, call, queue_pos = 1):
         queue_size = resolve_expression(call.arguments[queue_pos])
-        if isinstance(queue_size, (int, long, float)):
+        if isinstance(queue_size, (int, float)):
             return queue_size
         return None

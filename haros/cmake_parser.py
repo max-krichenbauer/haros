@@ -126,7 +126,7 @@ class CMakeGrammar(object):
 
     _reBlockBeginnings = (r"(?ix)"
                           + r"(?P<BlockBeginnings>"
-                          + "|".join(_blockTagsDict.keys())
+                          + "|".join(list(_blockTagsDict.keys()))
                           + r")")
 
     reBlockBeginnings = re.compile(_reBlockBeginnings, re.IGNORECASE)
@@ -136,7 +136,7 @@ class CMakeGrammar(object):
          re.compile(r"(?ix)^(?P<BlockEnding>"
                     + r"|".join(ends)
                     + r")$", re.IGNORECASE)
-        ) for beginning, ends in _blockTagsDict.iteritems()
+        ) for beginning, ends in list(_blockTagsDict.items())
     ])
 
     @staticmethod
@@ -203,7 +203,7 @@ class ParseInput():
         """Be usable as an iterator."""
         return self
 
-    def next(self):
+    def __next__(self):
         """Return the current line each time we are iterated.
         We don't go to the next line unless we've been accepted."""
 
@@ -541,18 +541,18 @@ class RosCMakeParser(LoggingObject):
         t = self.libraries.get(t, self.executables.get(t))
         if not t:
             return
-        for i in xrange(1, len(args)):
+        for i in range(1, len(args)):
             t.links.append(args[i])
 
     def _link_targets(self):
-        for target in self.libraries.itervalues():
+        for target in self.libraries.values():
             candidates = target.links
             target.links = []
             for other in candidates:
                 d = self.libraries.get(other, self.executables.get(other))
                 if d:
                     target.links.append(d)
-        for target in self.executables.itervalues():
+        for target in self.executables.values():
             candidates = target.links
             target.links = []
             for other in candidates:
