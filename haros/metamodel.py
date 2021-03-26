@@ -255,22 +255,22 @@ class SourceObject(MetamodelObject):
         return None
 
     def __lt__(self, scope):
-        if isinstance(scope, basestring):
+        if isinstance(scope, str):
             return self.SCOPES.index(self.scope) < self.SCOPES.index(scope)
         return self.SCOPES.index(self.scope) < self.SCOPES.index(scope.scope)
 
     def __le__(self, scope):
-        if isinstance(scope, basestring):
+        if isinstance(scope, str):
             return self.SCOPES.index(self.scope) <= self.SCOPES.index(scope)
         return self.SCOPES.index(self.scope) <= self.SCOPES.index(scope.scope)
 
     def __gt__(self, scope):
-        if isinstance(scope, basestring):
+        if isinstance(scope, str):
             return self.SCOPES.index(self.scope) > self.SCOPES.index(scope)
         return self.SCOPES.index(self.scope) > self.SCOPES.index(scope.scope)
 
     def __ge__(self, scope):
-        if isinstance(scope, basestring):
+        if isinstance(scope, str):
             return self.SCOPES.index(self.scope) >= self.SCOPES.index(scope)
         return self.SCOPES.index(self.scope) >= self.SCOPES.index(scope.scope)
 
@@ -1047,7 +1047,7 @@ class Parameter(Resource):
             return "int"
         if isinstance(value, float):
             return "double"
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             return "string"
         if isinstance(value, bool):
             return "boolean"
