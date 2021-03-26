@@ -421,7 +421,7 @@ class LaunchScope(LoggingObject):
             if not isinstance(value, dict):
                 result.append((name, value, name == key)) #FIXME sometimes not independent: ~ns/p + a != a
             else:
-                for key, other in value.iteritems():
+                for key, other in value.items():
                     stack.append((name, key, other))
         return result
 
@@ -595,7 +595,7 @@ class ConfigurationHints(LoggingObject):
         hints = hints or cls.defaults
         no_hints = {}
         for key, rcls in cls.hint_types:
-            for name, msg_type in hints.get(key, no_hints).iteritems():
+            for name, msg_type in hints.get(key, no_hints).items():
                 if not instance._valid_msg_type(msg_type, node_name):
                     continue
                 parts = name.rsplit("/", 1)

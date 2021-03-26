@@ -67,7 +67,7 @@ class UnresolvedValue(object):
         self.parts = []
 
     def append(self, part):
-        assert isinstance(part, (basestring, tuple))
+        assert isinstance(part, (str, tuple))
         self.parts.append(part)
 
     @property
@@ -154,7 +154,7 @@ class SubstitutionParser(object):
             return value
         parts = []
         for part in value.parts:
-            if isinstance(part, basestring):
+            if isinstance(part, str):
                 parts.append(part)
             else:
                 assert isinstance(part, tuple)
@@ -319,7 +319,7 @@ class BaseLaunchTag(object):
                 raise LaunchParserError("missing required attribute: " + key)
         self.children = []
         self.unknown = []
-        for key, value in attributes.iteritems():
+        for key, value in attributes.items():
             if isinstance(value, UnresolvedValue):
                 self.unknown.append(key)
         if "if" in attributes and "unless" in attributes:
@@ -671,7 +671,7 @@ class LaunchParser(object):
             return ErrorTag(e.value)
         text = tag.text.strip() if tag.text else ""
         element = cls(text, attributes)
-        if element.tag == "arg" and isinstance(element.name, basestring):
+        if element.tag == "arg" and isinstance(element.name, str):
             self.sub_parser.arguments[element.name] = element.value
         for child in tag:
             element.append(self._parse_tag(child))
@@ -680,7 +680,7 @@ class LaunchParser(object):
     def _attributes(self, tag, schema):
         attributes = {}
         sub = self.sub_parser.sub # shortcut to make line below shorter
-        for key, value in tag.attrib.iteritems():
+        for key, value in tag.attrib.items():
             if not key in schema:
                 continue # TODO raise an error vs. future compatibility
             attributes[key] = sub(value, conversion = schema[key])
